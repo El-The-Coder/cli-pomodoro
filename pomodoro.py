@@ -17,42 +17,61 @@ def show_notification(title, message):
     notification.show()
 
 def pomodoro_timer(duration):
+    start_time = time.time()
+    end_time = start_time + duration
     print("Pomodoro started!")
     try:
-        time.sleep(duration)
-        print("Pomodoro finished!")
+        while time.time() < end_time:
+            remaining_time = end_time - time.time()
+            minutes = int(remaining_time // 60)
+            seconds = int(remaining_time % 60)
+            print(f"Time remaining: {minutes:02d}:{seconds:02d}", end='\r')
+            time.sleep(1)
+        print("\n\nPomodoro finished!")
         play_alarm()
         show_notification("Pomodoro Finished!", "Take a break!")
     except KeyboardInterrupt:
-        print("Pomodoro interrupted!")
+        print("\n\nPomodoro interrupted!")
 
 def break_timer(duration):
+    start_time = time.time()
+    end_time = start_time + duration
     print("Break started!")
     try:
-        time.sleep(duration)
-        print("Break finished!")
+        while time.time() < end_time:
+            remaining_time = end_time - time.time()
+            minutes = int(remaining_time // 60)
+            seconds = int(remaining_time % 60)
+            print(f"Time remaining: {minutes:02d}:{seconds:02d}", end='\r')
+            time.sleep(1)
+        print("\n\nBreak finished!")
         play_alarm()
         show_notification("Break Finished!", "Start another Pomodoro!")
     except KeyboardInterrupt:
-        print("Break interrupted!")
+        print("\n\nBreak interrupted!")
 
 def start_pomodoro():
     pomodoro_duration = 25 * 60  # 25 minutes in seconds
-    break_duration = 5 * 60  # 5 minutes in seconds
+    short_break_duration = 5 * 60  # 5 minutes in seconds
+    long_break_duration = 20 * 60  # 20 minutes in seconds
 
-    pomodoro_thread = threading.Thread(target=pomodoro_timer, args=(pomodoro_duration,))
-    break_thread = threading.Thread(target=break_timer, args=(break_duration,))
+    pomodoros_completed = 0
 
-    pomodoro_thread.start()
-    pomodoro_thread.join()
+    while True:
+        pomodoro_thread = threading.Thread(target=pomodoro_timer, args=(pomodoro_duration,))
+        break_duration = long_break_duration if pomodoros_completed % 5 == 0 else short_break_duration
+        break_thread = threading.Thread(target=break_timer, args=(break_duration,))
 
-    break_thread.start()
-    break_thread.join()
+        pomodoro_thread.start()
+        pomodoro_thread.join()
 
-    start_pomodoro()
+        break_thread.start()
+        break_thread.join()
+
+        pomodoros_completed += 1
 
 def signal_handler(signal, frame):
-    print("Pomodoro stopped!")
+    print("\n\nPomodoro stopped!")
     sys.exit(0)
 
 if __name__ == '__main__':
