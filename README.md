@@ -9,6 +9,9 @@ requirements :
    python3 pomodoro.py
 4. to stop pomodoro you can use CTRL + C as stop key.
 
-
+update :
+1. History after doing pomodoro
+2. make different alarm start, fast break, long break, and finish.
+   
 please contact me if you found some bugs in your coumputer terminal.
 this program is created in linux ubuntu.
